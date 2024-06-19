@@ -2,7 +2,11 @@ import cv2
 import os
 import numpy as np
 import matplotlib.pyplot as plt
-import easein
+
+
+def ease_in_custom(t):
+    return np.power(t, 1.85)
+
 
 input_folder = 'input'
 
@@ -22,6 +26,7 @@ for contour in contours:
 centers.sort(key=lambda x: x[1])
 
 rows = []
+columns = {}
 current_row = []
 prev_y = centers[0][1]
 threshold = 10
@@ -30,11 +35,17 @@ for center in centers:
     if abs(center[1] - prev_y) > threshold:
         rows.append(current_row)
         current_row = []
+    if center[0] not in columns:
+        columns[center[0]] = [center]
+    else:
+        columns[center[0]].append(center)
     current_row.append(center)
     prev_y = center[1]
     current_row.sort(key=lambda x: x[0])
 
 rows.append(current_row)
+
+print(columns)
 
 new_image = np.zeros_like(image)
 
@@ -75,13 +86,11 @@ i = 0
 for x, y in top_row:
     if i >= len(top_row) / 2:
         y_graph.append((y - y_small) / (y_big - y_small))
-        x_graph.append((x_dist[i-1] - x_small) / (x_big - x_small))
+        x_graph.append((x_dist[i - 1] - x_small) / (x_big - x_small))
     i += 1
 
-print(centers)
-
 t = np.linspace(0, 1, round(len(top_row) / 2))
-y_custom = easein.ease_in_custom(t)
+y_custom = ease_in_custom(t)
 
 plt.plot(x_values, y_custom, label='Ease In Custom')
 plt.plot(x_values, y_graph, label='Top Row')
