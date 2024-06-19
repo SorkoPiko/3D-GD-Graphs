@@ -70,7 +70,7 @@ cv2.imwrite('output.png', new_image)
 
 top_row = rows[0]
 
-x_values = [i for i in range(round(len(top_row) / 2))]
+x_values = [i + round(len(top_row) / 2) for i in range(round(len(top_row) / 2))]
 y_y_values = [center[1] for center in top_row]
 x_y_values = x_dist
 
@@ -92,18 +92,12 @@ for x, y in top_row:
 t = np.linspace(0, 1, round(len(top_row) / 2))
 y_custom = ease_in_custom(t)
 
-plt.plot(x_values, y_custom, label='Ease In Custom')
-plt.plot(x_values, y_graph, label='Top Row')
-plt.title('Y values of the top row')
+plt.plot(x_values, y_custom, label='Simulated Easing')
+plt.plot(x_values, y_graph, label='Top Row Y Dif (Render)')
+plt.plot(x_values, x_graph, label='Top Row X Dif (Render)')
+plt.title('Top Row X/Y Difference')
 plt.xlabel('Dot Number')
-plt.ylabel('Y Difference')
+plt.ylabel('Difference')
 plt.grid(True)
-plt.show()
-
-plt.plot(x_values, y_custom, label='Ease In Custom')
-plt.plot(x_values, x_graph, label='X Difference')
-plt.title('X values of the top row')
-plt.xlabel('Dot Number')
-plt.ylabel('X Difference')
-plt.grid(True)
+plt.legend()
 plt.show()
