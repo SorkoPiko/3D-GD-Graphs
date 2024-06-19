@@ -25,9 +25,9 @@ for contour in contours:
 
 centers.sort(key=lambda x: x[1])
 
-rows = []
-columns = {}
-current_row = []
+rows: list[list[list[int]]] = []
+columns: dict[int, list] = {}
+current_row: list[list[int]] = []
 prev_y = centers[0][1]
 threshold = 10
 
@@ -42,10 +42,9 @@ for center in centers:
     current_row.append(center)
     prev_y = center[1]
     current_row.sort(key=lambda x: x[0])
+    columns[center[0]].sort(key=lambda x: x[1])
 
 rows.append(current_row)
-
-print(columns)
 
 new_image = np.zeros_like(image)
 
@@ -69,32 +68,33 @@ for row in rows:
 cv2.imwrite('output.png', new_image)
 
 top_row = rows[0]
+left_column = columns[list(columns.keys())[0]]
 
-x_values = [i + round(len(top_row) / 2) for i in range(round(len(top_row) / 2))]
-y_y_values = [center[1] for center in top_row]
-x_y_values = x_dist
+row_x_values = [i + round(len(top_row) / 2) for i in range(round(len(top_row) / 2))]
+row_y_y_values = [center[1] for center in top_row]
+row_x_y_values = x_dist
 
-y_big = min(y_y_values)
-y_small = max(y_y_values)
-x_big = max(x_y_values)
-x_small = min(x_y_values)
+row_y_big = min(row_y_y_values)
+row_y_small = max(row_y_y_values)
+row_x_big = max(row_x_y_values)
+row_x_small = min(row_x_y_values)
 
-y_graph = []
-x_graph = []
+row_y_graph = []
+row_x_graph = []
 
 i = 0
 for x, y in top_row:
     if i >= len(top_row) / 2:
-        y_graph.append((y - y_small) / (y_big - y_small))
-        x_graph.append((x_dist[i - 1] - x_small) / (x_big - x_small))
+        row_y_graph.append((y - row_y_small) / (row_y_big - row_y_small))
+        row_x_graph.append((x_dist[i - 1] - row_x_small) / (row_x_big - row_x_small))
     i += 1
 
 t = np.linspace(0, 1, round(len(top_row) / 2))
 y_custom = ease_in_custom(t)
 
-plt.plot(x_values, y_custom, label='Simulated Easing')
-plt.plot(x_values, y_graph, label='Top Row Y Dif (Render)')
-plt.plot(x_values, x_graph, label='Top Row X Dif (Render)')
+plt.plot(row_x_values, y_custom, label='Simulated Easing')
+plt.plot(row_x_values, row_y_graph, label='Top Row Y Dif (Render)')
+plt.plot(row_x_values, row_x_graph, label='Top Row X Dif (Render)')
 plt.title('Top Row X/Y Difference')
 plt.xlabel('Dot Number')
 plt.ylabel('Difference')
