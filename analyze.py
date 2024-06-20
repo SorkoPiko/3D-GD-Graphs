@@ -55,7 +55,6 @@ row_x_y_values = []
 left_column = columns[list(columns.keys())[0]]
 
 top_row = rows[0]
-print(len(rows))
 
 for i in range(len(top_row)):
     if i < len(top_row) - 1:
@@ -72,6 +71,8 @@ row_x_small = min(row_x_y_values)
 row_y_graph = []
 row_x_graph = []
 
+row_x_raw = [i for i in range(len(top_row) // 2)][0]
+
 i = 0
 for x, y in top_row:
     if i >= len(top_row) / 2:
@@ -81,6 +82,22 @@ for x, y in top_row:
 
 t = np.linspace(0, 1, len(top_row) // 2)
 y_custom = ease_in_custom(t)
+
+# Reverse the differences in row_x_graph
+reversed_diffs = 1 - np.array(row_x_graph)
+
+# Scale these differences back to the original range
+max_x = max(x for x, y in top_row)
+scaled_diffs = reversed_diffs * max_x
+
+# Add these scaled differences to the X value of the first point
+new_x_values = np.cumsum(np.insert(scaled_diffs, 0, top_row[0][0]))
+
+# Replace the X values in the top row with the new X values
+new_top_row = [(int(new_x), y) for new_x, (_, y) in zip(new_x_values, top_row)]
+
+print(top_row)
+print(new_top_row)
 
 plt.plot(row_x_values, y_custom, label='Simulated Easing')
 plt.plot(row_x_values, row_y_graph, label='Top Row Y Dif (Render)')
