@@ -5,11 +5,11 @@ import matplotlib.pyplot as plt
 
 
 def ease_in_custom(npArray):
-    return np.power(npArray, 1.85)
+    return np.power(npArray, 1.875)
 
 
 def linear_easing(npArray):
-    return np.divide(npArray, 1.85)
+    return np.divide(npArray, 1.125)
 
 
 input_folder = 'input'
@@ -33,7 +33,7 @@ current_row: list[tuple[int, int]] = []
 rows: list[list[tuple[int, int]]] = []
 columns: dict[int, list[tuple[int, int]]] = {}
 prev_y = centers[0][1]
-threshold = 100
+threshold = 80
 
 for center in centers:
     if abs(center[1] - prev_y) > threshold:
@@ -51,32 +51,15 @@ for center in centers:
 rows.append(current_row)
 columns = dict(sorted(columns.items()))
 
-new_image = np.zeros_like(image)
-
 row_x_y_values = []
 left_column = columns[list(columns.keys())[0]]
 
-e = 0
-for row in rows:
-    colour = [0, 0, 255]
-    if e == 0:
-        colour = [0, 255, 0]
-    for i in range(len(row)):
-        if row[i] in left_column:
-            newColour = [255, 0, 0]
-        else:
-            newColour = colour
-        cv2.circle(new_image, row[i], 5, newColour, -1)
-
-        if i < len(row) - 1:
-            cv2.line(new_image, row[i], row[i + 1], newColour, 2)
-            if e == 0:
-                row_x_y_values.append(row[i + 1][0] - row[i][0])
-    e += 1
-
-cv2.imwrite('output.png', new_image)
-
 top_row = rows[0]
+print(len(rows))
+
+for i in range(len(top_row)):
+    if i < len(top_row) - 1:
+        row_x_y_values.append(top_row[i + 1][0] - top_row[i][0])
 
 row_x_values = [i + len(top_row) // 2 for i in range(len(top_row) // 2)]
 row_y_y_values = [center[1] for center in top_row]
@@ -128,8 +111,8 @@ t = np.linspace(0, 1, len(left_column) // 2)
 y_custom = linear_easing(t)
 
 plt.plot(column_x_values, y_custom, label='Simulated Easing')
-plt.plot(column_x_values, column_y_graph, label='Left Column Y Dif (Render)')
-plt.title('Left Column Y Difference')
+plt.plot(column_x_values, column_y_graph, label='Left Column Y Dev (Render)')
+plt.title('Left Column Y Deviation')
 plt.xlabel('Dot Number')
 plt.ylabel('Difference')
 plt.grid(True)
