@@ -29,8 +29,11 @@ centers = []
 
 for contour in contours:
     M = cv2.moments(contour)
-    cX = int(M["m10"] / M["m00"])
-    cY = int(M["m01"] / M["m00"])
+    if M["m00"] != 0:
+        cX = int(M["m10"] / M["m00"])
+        cY = int(M["m01"] / M["m00"])
+    else:
+        cX, cY = 0, 0
     centers.append((cX, cY))
 
 centers.sort(key=lambda _: _[1])
@@ -103,7 +106,7 @@ for i in range(len(row_x_graph)):
         new_diffs.append(top_row[i][0] + row_x_graph[i] * diff)
     else:
         new_diffs.append(top_row[i][0] - row_x_graph[i] * diff)
-        
+
 print(new_diffs)
 
 plt.plot([i for i in range(len(top_row))], y_custom, label='Simulated Easing')
