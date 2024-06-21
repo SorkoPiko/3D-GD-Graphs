@@ -46,4 +46,4 @@ for j in range(90):
         draw.ellipse((x - 2.5, y - 2.5, x + 2.5, y + 2.5), fill='black')
 
 # Save the image to a file
-image.save('dot_grid.png')
+image.save('output.png')

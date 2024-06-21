@@ -90,24 +90,21 @@ for x in row_x_y_values:
 y_custom = ease_in_custom(np.linspace(-1, 1, len(top_row)))
 x_custom = ease_in_custom(np.linspace(-1, 1, len(row_x_y_values)))
 
-diff = row_x_big - row_x_small
+# This code doesn't work
 
-print(row_x_graph)
-print(top_row)
+diff = row_x_big - row_x_small
 
 new_diffs = []
 
-negative = True
-
 for i in range(len(row_x_graph)):
-    if row_x_graph[i] == 0:
-        negative = False
-    if negative:
-        new_diffs.append(top_row[i][0] + row_x_graph[i] * diff)
+    if row_x_graph[i] > 0:
+        new_diffs.append(row_x_raw[i] - (row_x_y_values[i] - row_x_small))
     else:
-        new_diffs.append(top_row[i][0] - row_x_graph[i] * diff)
+        new_diffs.append(row_x_raw[i] + (row_x_y_values[i] - row_x_small))
+#    if i > 1:
+#        assert (new_diffs[i] - new_diffs[i - 1]) == (new_diffs[i - 1] - new_diffs[i - 2])
 
-print(new_diffs)
+# End of code that doesn't work
 
 plt.plot([i for i in range(len(top_row))], y_custom, label='Simulated Easing')
 plt.plot([i for i in range(len(top_row))], row_y_graph, label='Top Row Y Pos (Render)')
