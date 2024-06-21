@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 
 def ease_in_custom(npArray):
-    power = 2.056
+    power = 2.058
     returnArray = []
     for x in npArray:
         if x < 0:
@@ -15,7 +15,7 @@ def ease_in_custom(npArray):
 
 
 def linear_easing(npArray):
-    return np.divide(npArray, 1.056)
+    return np.divide(npArray, 1.058)
 
 
 input_folder = 'input'
@@ -75,7 +75,6 @@ row_x_small = min(row_x_y_values)
 
 row_y_graph = []
 row_x_graph = []
-row_x_graph_raw = [x for x in row_x_y_values]
 
 row_x_raw = [x[0] for x in top_row]
 
@@ -88,10 +87,24 @@ for x in row_x_y_values:
 y_custom = ease_in_custom(np.linspace(-1, 1, len(top_row)))
 x_custom = ease_in_custom(np.linspace(-1, 1, len(row_x_y_values)))
 
-new_list = [row_x_raw[0]]
+diff = row_x_big - row_x_small
 
-for i in range(len(row_x_raw) - 1):
-    new_list.append(row_x_raw[i] + row_x_graph_raw[i] / (row_x_graph[i] + 1))
+print(row_x_graph)
+print(top_row)
+
+new_diffs = []
+
+negative = True
+
+for i in range(len(row_x_graph)):
+    if row_x_graph[i] == 0:
+        negative = False
+    if negative:
+        new_diffs.append(top_row[i][0] + row_x_graph[i] * diff)
+    else:
+        new_diffs.append(top_row[i][0] - row_x_graph[i] * diff)
+        
+print(new_diffs)
 
 plt.plot([i for i in range(len(top_row))], y_custom, label='Simulated Easing')
 plt.plot([i for i in range(len(top_row))], row_y_graph, label='Top Row Y Pos (Render)')
@@ -118,8 +131,6 @@ column_y_values = []
 for i in range(len(left_column)):
     column_y_values.append(left_column[i][1] - rows[i][len(rows[i]) // 2][1])
 
-print(column_y_values)
-
 column_y_big = max(column_y_values)
 column_y_small = min(column_y_values)
 
@@ -127,8 +138,6 @@ column_y_graph = []
 
 for i in range(len(left_column) - 1):
     column_y_graph.append((column_y_values[i] - column_y_small) / (column_y_big - column_y_small))
-
-print(column_y_graph)
 
 t = np.linspace(0, 1, len(left_column) - 1)
 y_custom = linear_easing(t)
